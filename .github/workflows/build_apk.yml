@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +18,7 @@ jobs:
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Flutter
@@ -34,14 +37,32 @@ jobs:
       - name: Build App Bundle (AAB for Cafe Bazaar / Myket)
         run: flutter build appbundle --release
 
+      - name: Rename APK for release
+        run: cp build/app/outputs/flutter-apk/app-release.apk longdistance_native.apk
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: longdistance-native-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: longdistance_native.apk
 
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: longdistance-bazaar-aab
           path: build/app/outputs/bundle/release/app-release.aab
+
+      - name: Create GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/master')
+        with:
+          tag_name: v1.0.0
+          name: "LongDistance Native Release v1.0.0"
+          body: "Official 100% Native Flutter release for LongDistance (لانگ‌دیستنس)."
+          draft: false
+          prerelease: false
+          files: |
+            longdistance_native.apk
+            build/app/outputs/bundle/release/app-release.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
