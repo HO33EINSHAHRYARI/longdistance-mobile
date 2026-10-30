@@ -13,7 +13,7 @@ class AppTheme {
       primaryColor: AppColors.primary,
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primary,
-        secondary: AppColors.secondary,
+        secondary: AppColors.brandBlue,
         surface: AppColors.surface,
         background: AppColors.background,
         error: AppColors.danger,
@@ -26,7 +26,7 @@ class AppTheme {
         backgroundColor: AppColors.surface.withOpacity(0.85),
         elevation: 0,
         centerTitle: false,
-        scrolledUnderElevation: 2,
+        scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
         titleTextStyle: textTheme.titleLarge?.copyWith(
           color: AppColors.textPrimary,
@@ -34,53 +34,42 @@ class AppTheme {
           fontSize: 18,
         ),
       ),
+      // Exact Web App Card (border-radius: 30px)
       cardTheme: CardTheme(
         color: AppColors.card,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(30),
           side: const BorderSide(color: AppColors.cardBorder, width: 1),
         ),
-        margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       ),
-      tabBarTheme: TabBarTheme(
-        labelColor: AppColors.primaryLight,
-        unselectedLabelColor: AppColors.textSecondary,
-        indicatorColor: AppColors.primary,
-        indicatorSize: TabBarIndicatorSize.label,
-        dividerColor: Colors.transparent,
-        labelStyle: textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          fontSize: 13.5,
-        ),
-        unselectedLabelStyle: textTheme.bodyMedium?.copyWith(
-          fontSize: 13,
-        ),
-      ),
+      // Exact Web App Inputs (border-radius: 32px, pill style)
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        fillColor: AppColors.inputBg,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         hintStyle: textTheme.bodyMedium?.copyWith(color: AppColors.textMuted),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.cardBorder),
+          borderRadius: BorderRadius.circular(32),
+          borderSide: const BorderSide(color: Colors.transparent),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.cardBorder),
+          borderRadius: BorderRadius.circular(32),
+          borderSide: const BorderSide(color: Colors.transparent),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(32),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
       ),
+      // Exact Web App Buttons (border-radius: 40px)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(40),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: textTheme.labelLarge?.copyWith(

@@ -56,9 +56,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/master')
         with:
-          tag_name: v1.0.0
-          name: "LongDistance Native Release v1.0.0"
-          body: "Official 100% Native Flutter release for LongDistance (لانگ‌دیستنس)."
+          tag_name: v1.0.${{ github.run_number }}
+          name: "LongDistance Native Release v1.0.${{ github.run_number }}"
+          body: "Official 100% Native Flutter release for LongDistance (لانگ‌دیستنس) with pixel-perfect web app UI."
           draft: false
           prerelease: false
           files: |

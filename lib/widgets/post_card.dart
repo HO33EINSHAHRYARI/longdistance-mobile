@@ -42,8 +42,8 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
       duration: const Duration(milliseconds: 250),
     );
     _likeScaleAnim = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.35), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.35, end: 1.0), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.4), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.4, end: 1.0), weight: 50),
     ]).animate(_likeAnimController);
   }
 
@@ -62,7 +62,6 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
     try {
       await ApiClient.post(ApiEndpoints.like, body: {'id': widget.post.id});
     } catch (_) {
-      // Revert if error
       setState(() {
         widget.post.toggleLike();
       });
@@ -101,200 +100,296 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
     final images = _extractImages(widget.post.content);
     final text = _cleanText(widget.post.content, images);
 
-    return Card(
-      child: InkWell(
-        onTap: widget.onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Header
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => widget.onAuthorTap?.call(widget.post.userId),
-                    child: UserAvatar(
-                      avatarUrl: widget.post.avatar,
-                      displayName: widget.post.displayName,
-                      isVerified: widget.post.verified,
-                      badgeColor: widget.post.badgeColor,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: GestureDetector(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+      decoration: BoxDecoration(
+        gradient: AppColors.cardGradient,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: AppColors.cardBorder, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: AppColors.brandPurple.withOpacity(0.04),
+            blurRadius: 16,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: widget.onTap,
+          borderRadius: BorderRadius.circular(30),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header (Exact Web .post-header)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
                       onTap: () => widget.onAuthorTap?.call(widget.post.userId),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  widget.post.displayName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14.5,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              if (widget.post.edited) ...[
-                                const SizedBox(width: 6),
-                                const Text(
-                                  '(ویرایش‌شده)',
-                                  style: TextStyle(
-                                    color: AppColors.textMuted,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '@${widget.post.username} • ${DateFormatter.timeAgo(widget.post.createdAt)}',
-                            style: const TextStyle(
-                              color: AppColors.textMuted,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                      child: UserAvatar(
+                        avatarUrl: widget.post.avatar,
+                        displayName: widget.post.displayName,
+                        isVerified: widget.post.verified,
+                        badgeColor: widget.post.badgeColor,
+                        radius: 21,
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_horiz_rounded, color: AppColors.textSecondary),
-                    onPressed: () {
-                      ActionBottomSheet.showPostMenu(
-                        context: context,
-                        postId: widget.post.id,
-                        authorId: widget.post.userId,
-                        authorName: widget.post.displayName,
-                        content: widget.post.content,
-                        isOwnPost: widget.isOwnPost,
-                        onPostDeleted: () => widget.onPostDeleted?.call(),
-                        onAuthorBlocked: () => widget.onAuthorBlocked?.call(),
-                      );
-                    },
-                  ),
-                ],
-              ),
-
-              // Content Text
-              if (text.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Text(
-                  text,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    height: 1.65,
-                    color: AppColors.textPrimary,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ],
-
-              // Attached Images
-              if (images.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImage(
-                    imageUrl: images.first,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      height: 180,
-                      color: AppColors.surfaceLight,
-                      child: const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)),
-                    ),
-                    errorWidget: (context, url, error) => const SizedBox.shrink(),
-                  ),
-                ),
-              ],
-
-              const SizedBox(height: 14),
-
-              // Actions Footer
-              Row(
-                children: [
-                  // Like Button
-                  ScaleTransition(
-                    scale: _likeScaleAnim,
-                    child: InkWell(
-                      onTap: _handleLike,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        child: Row(
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => widget.onAuthorTap?.call(widget.post.userId),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
-                              widget.post.isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                              color: widget.post.isLiked ? AppColors.accent : AppColors.textSecondary,
-                              size: 20,
+                            Row(
+                              children: [
+                                // Exact Web .author-name-card
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0x0DFFFFFF),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    widget.post.displayName,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13.5,
+                                      color: Colors.white,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                if (widget.post.edited) ...[
+                                  const SizedBox(width: 6),
+                                  const Text(
+                                    '(ویرایش‌شده)',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: AppColors.textMuted,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              DateFormatter.toPersianDigits(widget.post.likeCount),
-                              style: TextStyle(
-                                color: widget.post.isLiked ? AppColors.accent : AppColors.textSecondary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
+                            const SizedBox(height: 4),
+                            // Exact Web .post-time
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: const Color(0x08FFFFFF),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                DateFormatter.formatRelative(widget.post.createdAt),
+                                style: const TextStyle(
+                                  fontSize: 10.5,
+                                  color: AppColors.textMuted,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(width: 16),
-
-                  // Comment Button
-                  InkWell(
-                    onTap: widget.onTap,
-                    borderRadius: BorderRadius.circular(10),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.chat_bubble_outline_rounded,
-                            color: AppColors.textSecondary,
-                            size: 19,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            DateFormatter.toPersianDigits(widget.post.commentCount),
-                            style: const TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                    // Exact Web 3-Dot Action Menu Button
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: const BoxDecoration(
+                        color: Color(0x0DFFFFFF),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.more_horiz_rounded, size: 18),
+                        color: AppColors.textSecondary,
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          ActionBottomSheet.show(
+                            context: context,
+                            postId: widget.post.id,
+                            authorId: widget.post.userId,
+                            authorName: widget.post.displayName,
+                            content: widget.post.content,
+                            isOwnPost: widget.isOwnPost,
+                            onPostDeleted: () => widget.onPostDeleted?.call(),
+                            onAuthorBlocked: () => widget.onAuthorBlocked?.call(),
+                          );
+                        },
                       ),
                     ),
-                  ),
+                  ],
+                ),
 
-                  const Spacer(),
-
-                  // Save Bookmark Button
-                  IconButton(
-                    icon: Icon(
-                      widget.post.isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                      color: widget.post.isSaved ? AppColors.primary : AppColors.textSecondary,
-                      size: 21,
+                // Content Text
+                if (text.isNotEmpty) ...[
+                  const SizedBox(height: 14),
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      height: 1.65,
+                      color: Color(0xDEFFFFFF),
                     ),
-                    onPressed: _handleSave,
+                    textAlign: TextAlign.right,
                   ),
                 ],
-              ),
-            ],
+
+                // Attached Images
+                if (images.isNotEmpty) ...[
+                  const SizedBox(height: 14),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: CachedNetworkImage(
+                      imageUrl: images.first,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        height: 200,
+                        color: AppColors.surfaceLight,
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => const SizedBox.shrink(),
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 14),
+
+                // Post Divider
+                Container(
+                  height: 1,
+                  color: const Color(0x0DFFFFFF),
+                  margin: const EdgeInsets.only(bottom: 10),
+                ),
+
+                // Actions Footer (Exact Web .post-footer Pill Buttons)
+                Row(
+                  children: [
+                    // Like Pill Button
+                    ScaleTransition(
+                      scale: _likeScaleAnim,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _handleLike,
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: widget.post.isLiked
+                                  ? const Color(0x2BEE395B)
+                                  : const Color(0x0DFFFFFF),
+                              border: Border.all(
+                                color: widget.post.isLiked
+                                    ? const Color(0x66EE395B)
+                                    : Colors.transparent,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  widget.post.isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                                  color: widget.post.isLiked ? const Color(0xFFEF4444) : AppColors.textSecondary,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  DateFormatter.toPersianDigits(widget.post.likeCount),
+                                  style: TextStyle(
+                                    color: widget.post.isLiked ? const Color(0xFFEF4444) : AppColors.textSecondary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    // Comment Pill Button
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: widget.onTap,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0x0DFFFFFF),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.chat_bubble_outline_rounded,
+                                color: AppColors.textSecondary,
+                                size: 15,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                DateFormatter.toPersianDigits(widget.post.commentCount),
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const Spacer(),
+
+                    // Save / Bookmark Pill Button
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: _handleSave,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: widget.post.isSaved
+                                ? const Color(0x2BC084FC)
+                                : const Color(0x0DFFFFFF),
+                            border: Border.all(
+                              color: widget.post.isSaved
+                                  ? const Color(0x66C084FC)
+                                  : Colors.transparent,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            widget.post.isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                            color: widget.post.isSaved ? AppColors.brandPurple : AppColors.textSecondary,
+                            size: 17,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

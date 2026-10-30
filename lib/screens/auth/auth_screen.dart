@@ -72,6 +72,7 @@ class _AuthScreenState extends State<AuthScreen> {
         content: Text(message, textAlign: TextAlign.right),
         backgroundColor: isError ? AppColors.danger : AppColors.success,
         behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }
@@ -86,185 +87,274 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // 3D Glowing Brand Logo
-                Container(
-                  width: 76,
-                  height: 76,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: AppColors.primaryGradient,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withOpacity(0.35),
-                        blurRadius: 28,
-                        spreadRadius: 4,
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Text('💜', style: TextStyle(fontSize: 34)),
-                  ),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Stack(
+          children: [
+            // Ambient Glow Orb 1 (Top Right Purple)
+            Positioned(
+              top: -60,
+              right: -60,
+              child: Container(
+                width: 240,
+                height: 240,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.brandPurple.withOpacity(0.18),
                 ),
-                const SizedBox(height: 18),
-                Text(
-                  _isLogin ? 'ورود به لانگ‌دیستنس' : 'عضویت در لانگ‌دیستنس',
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'شبکه‌ای برای به اشتراک گذاشتن لحظات',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+              ),
+            ),
 
-                const SizedBox(height: 28),
+            // Ambient Glow Orb 2 (Bottom Left Blue)
+            Positioned(
+              bottom: -60,
+              left: -60,
+              child: Container(
+                width: 240,
+                height: 240,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.brandBlue.withOpacity(0.18),
+                ),
+              ),
+            ),
 
-                // Segmented Switcher
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.cardBorder),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _buildSegmentButton(
-                          title: '🚀 ورود',
-                          isActive: _isLogin,
-                          onTap: () => setState(() => _isLogin = true),
+            // Main Content
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 440),
+                    decoration: BoxDecoration(
+                      color: const Color(0xCC12121C),
+                      borderRadius: BorderRadius.circular(36),
+                      border: Border.all(color: const Color(0x40C084FC), width: 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.65),
+                          blurRadius: 40,
+                          offset: const Offset(0, 20),
                         ),
-                      ),
-                      Expanded(
-                        child: _buildSegmentButton(
-                          title: '✨ عضویت',
-                          isActive: !_isLogin,
-                          onTap: () => setState(() => _isLogin = false),
+                        BoxShadow(
+                          color: AppColors.brandPurple.withOpacity(0.12),
+                          blurRadius: 35,
+                          spreadRadius: 2,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // Form Inputs Card
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.cardBorder),
-                  ),
-                  child: Column(
-                    children: [
-                      // Username
-                      TextField(
-                        controller: _usernameController,
-                        textDirection: TextDirection.ltr,
-                        decoration: const InputDecoration(
-                          hintText: 'نام کاربری (انگلیسی)',
-                          prefixIcon: Icon(Icons.person_outline_rounded, color: AppColors.textSecondary),
+                      ],
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 34),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Logo with Glow
+                        Container(
+                          width: 78,
+                          height: 78,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: AppColors.primaryGradient,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.brandPurple.withOpacity(0.4),
+                                blurRadius: 25,
+                                spreadRadius: 3,
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Text('💜', style: TextStyle(fontSize: 36)),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 18),
 
-                      if (!_isLogin) ...[
-                        const SizedBox(height: 14),
-                        // Email
+                        // Title with Gradient
+                        ShaderMask(
+                          shaderCallback: (bounds) => AppColors.primaryGradient.createShader(bounds),
+                          child: const Text(
+                            'لانگ‌دیستنس',
+                            style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'روابط واقعی، فراتر از فاصله‌ها',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0x99FFFFFF),
+                          ),
+                        ),
+
+                        const SizedBox(height: 26),
+
+                        // Tab Switcher Pill
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: AppColors.tabsHeaderBg,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(color: const Color(0x0DFFFFFF), width: 1),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _buildSegmentButton(
+                                  title: 'ورود به حساب',
+                                  isActive: _isLogin,
+                                  onTap: () => setState(() => _isLogin = true),
+                                ),
+                              ),
+                              Expanded(
+                                child: _buildSegmentButton(
+                                  title: 'ثبت‌نام جدید',
+                                  isActive: !_isLogin,
+                                  onTap: () => setState(() => _isLogin = false),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 22),
+
+                        // Username Input
                         TextField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
+                          controller: _usernameController,
                           textDirection: TextDirection.ltr,
-                          decoration: const InputDecoration(
-                            hintText: 'ایمیل (example@gmail.com)',
-                            prefixIcon: Icon(Icons.email_outlined, color: AppColors.textSecondary),
+                          decoration: InputDecoration(
+                            hintText: 'نام کاربری (انگلیسی)',
+                            prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.brandPurple, size: 20),
+                            filled: true,
+                            fillColor: const Color(0x0DFFFFFF),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(32),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+
+                        if (!_isLogin) ...[
+                          const SizedBox(height: 14),
+                          // Email Input
+                          TextField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            textDirection: TextDirection.ltr,
+                            decoration: InputDecoration(
+                              hintText: 'ایمیل (example@gmail.com)',
+                              prefixIcon: const Icon(Icons.email_outlined, color: AppColors.brandPurple, size: 20),
+                              filled: true,
+                              fillColor: const Color(0x0DFFFFFF),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(32),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                          ),
+                        ],
+
+                        const SizedBox(height: 14),
+
+                        // Password Input
+                        TextField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          textDirection: TextDirection.ltr,
+                          decoration: InputDecoration(
+                            hintText: 'رمز عبور (حداقل ۴ کاراکتر)',
+                            prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.brandPurple, size: 20),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                color: const Color(0x80FFFFFF),
+                                size: 20,
+                              ),
+                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                            ),
+                            filled: true,
+                            fillColor: const Color(0x0DFFFFFF),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(32),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Glow Submit Button (.btn-glow)
+                        Container(
+                          width: double.infinity,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                            borderRadius: BorderRadius.circular(40),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.brandBlue.withOpacity(0.35),
+                                blurRadius: 18,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _handleSubmit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                  )
+                                : Text(
+                                    _isLogin ? 'ورود به حساب' : 'عضویت در لانگ‌دیستنس',
+                                    style: const TextStyle(fontSize: 15.5, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 18),
+
+                        // Switch Link
+                        GestureDetector(
+                          onTap: () => setState(() => _isLogin = !_isLogin),
+                          child: RichText(
+                            text: TextSpan(
+                              style: const TextStyle(fontSize: 13, color: Color(0x80FFFFFF)),
+                              children: [
+                                TextSpan(text: _isLogin ? 'حساب کاربری نداری؟ ' : 'قبلاً حساب داشتی؟ '),
+                                TextSpan(
+                                  text: _isLogin ? 'ثبت‌نام کن' : 'وارد شو',
+                                  style: const TextStyle(
+                                    color: AppColors.brandPurple,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
-
-                      const SizedBox(height: 14),
-
-                      // Password
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: _obscurePassword,
-                        textDirection: TextDirection.ltr,
-                        decoration: InputDecoration(
-                          hintText: 'رمز عبور (حداقل ۴ کاراکتر)',
-                          prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textSecondary),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                              color: AppColors.textSecondary,
-                            ),
-                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Submit Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _handleSubmit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                            elevation: 8,
-                            shadowColor: AppColors.primary.withOpacity(0.5),
-                          ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                                )
-                              : Text(
-                                  _isLogin ? 'ورود به حساب' : 'ساخت حساب کاربری',
-                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                                ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-
-                const SizedBox(height: 24),
-
-                // Shield badge
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.shield_outlined, color: AppColors.textMuted, size: 16),
-                    SizedBox(width: 6),
-                    Text(
-                      'ورود امن با رمزنگاری پیشرفته داده‌ها',
-                      style: TextStyle(color: AppColors.textMuted, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -279,18 +369,23 @@ class _AuthScreenState extends State<AuthScreen> {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 11),
+        padding: const EdgeInsets.symmetric(vertical: 9),
         decoration: BoxDecoration(
-          color: isActive ? AppColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          gradient: isActive ? AppColors.tabActiveGradient : null,
+          color: isActive ? null : Colors.transparent,
+          borderRadius: BorderRadius.circular(26),
+          border: Border.all(
+            color: isActive ? AppColors.tabActiveBorder : Colors.transparent,
+            width: 1,
+          ),
         ),
         child: Center(
           child: Text(
             title,
             style: TextStyle(
-              color: isActive ? Colors.white : AppColors.textSecondary,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
+              color: isActive ? AppColors.brandPurple : const Color(0x80FFFFFF),
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              fontSize: 13,
             ),
           ),
         ),
