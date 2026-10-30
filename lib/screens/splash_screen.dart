@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
-import '../core/constants/api_endpoints.dart';
-import '../core/network/api_client.dart';
-import 'auth/auth_screen.dart';
-import 'home/home_screen.dart';
+import 'web_shell/web_shell_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -22,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     super.initState();
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1200),
     );
 
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.05).animate(
@@ -34,41 +31,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
 
     _animController.forward();
-    _checkAuth();
+    _navigateToHome();
   }
 
-  Future<void> _checkAuth() async {
-    await Future.delayed(const Duration(milliseconds: 2000));
-    final token = await ApiClient.getToken();
-
+  Future<void> _navigateToHome() async {
+    await Future.delayed(const Duration(milliseconds: 1600));
     if (!mounted) return;
 
-    if (token == null || token.isEmpty) {
-      _navigateTo(const AuthScreen());
-      return;
-    }
-
-    try {
-      final res = await ApiClient.get(ApiEndpoints.authCheck);
-      if (!mounted) return;
-      if (res['authenticated'] == true) {
-        _navigateTo(HomeScreen(currentUserId: res['user']['id']));
-      } else {
-        await ApiClient.clearToken();
-        _navigateTo(const AuthScreen());
-      }
-    } catch (_) {
-      if (!mounted) return;
-      // If offline or network error, if token exists still allow into home
-      _navigateTo(const HomeScreen(currentUserId: 0));
-    }
-  }
-
-  void _navigateTo(Widget screen) {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 600),
-        pageBuilder: (_, __, ___) => screen,
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (_, __, ___) => const WebShellScreen(),
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -99,27 +72,27 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   children: [
                     // Glowing Brand Logo
                     Container(
-                      width: 110,
-                      height: 110,
+                      width: 100,
+                      height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: AppColors.primaryGradient,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.45),
+                            color: AppColors.brandPurple.withOpacity(0.45),
                             blurRadius: 36,
-                            spreadRadius: 8,
+                            spreadRadius: 6,
                           ),
                         ],
                       ),
                       child: const Center(
                         child: Text(
                           '💜',
-                          style: TextStyle(fontSize: 48),
+                          style: TextStyle(fontSize: 44),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 24),
                     const Text(
                       'لانگ‌دیستنس',
                       style: TextStyle(
@@ -131,19 +104,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'شبکه‌ای برای اتصال دل‌ها',
+                      'روابط واقعی، فراتر از فاصله‌ها',
                       style: TextStyle(
-                        fontSize: 13.5,
+                        fontSize: 13,
                         color: AppColors.textSecondary,
                       ),
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 40),
                     const SizedBox(
-                      width: 24,
-                      height: 24,
+                      width: 22,
+                      height: 22,
                       child: CircularProgressIndicator(
-                        strokeWidth: 2.2,
-                        color: AppColors.primaryLight,
+                        strokeWidth: 2,
+                        color: AppColors.brandPurple,
                       ),
                     ),
                   ],
