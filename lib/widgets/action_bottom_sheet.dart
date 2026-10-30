@@ -5,6 +5,26 @@ import '../core/constants/api_endpoints.dart';
 import '../core/network/api_client.dart';
 
 class ActionBottomSheet {
+  static void show({
+    required BuildContext context,
+    required int postId,
+    required int authorId,
+    required String authorName,
+    required String content,
+    required bool isOwnPost,
+    required VoidCallback onPostDeleted,
+    required VoidCallback onAuthorBlocked,
+  }) => showPostMenu(
+    context: context,
+    postId: postId,
+    authorId: authorId,
+    authorName: authorName,
+    content: content,
+    isOwnPost: isOwnPost,
+    onPostDeleted: onPostDeleted,
+    onAuthorBlocked: onAuthorBlocked,
+  );
+
   static void showPostMenu({
     required BuildContext context,
     required int postId,

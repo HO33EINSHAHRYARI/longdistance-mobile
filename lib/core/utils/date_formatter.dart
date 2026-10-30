@@ -9,6 +9,8 @@ class DateFormatter {
     return text;
   }
 
+  static String formatRelative(String? dateString) => timeAgo(dateString);
+
   static String timeAgo(String? dateString) {
     if (dateString == null || dateString.isEmpty) return '';
     try {

@@ -13,6 +13,8 @@ class AppColors {
   static const Color brandPurple = Color(0xFFC084FC);
   static const Color brandBlue = Color(0xFF60A5FA);
   static const Color primary = Color(0xFFC084FC);
+  static const Color primaryLight = Color(0xFFC084FC);
+  static const Color secondary = Color(0xFF60A5FA);
   static const Color accent = Color(0xFFEC4899);
 
   static const LinearGradient primaryGradient = LinearGradient(
@@ -59,6 +61,7 @@ class AppColors {
 
   // States
   static const Color danger = Color(0xFFEF4444);
+  static const Color dangerSurface = Color(0x26EF4444);
   static const LinearGradient dangerGradient = LinearGradient(
     colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
     begin: Alignment.topLeft,
